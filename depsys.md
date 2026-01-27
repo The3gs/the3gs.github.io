@@ -15,6 +15,14 @@ I am assuming that you have a decent understanding of dependent types, and type 
 I will be using a Rust style syntax for the pseudocode in this document.
 If anything strays far from Rust, I will attempt to explan my reasoning.
 
+## Inspirations
+
+Several things inspireed me to make this, with the most obvious being Rust for the flavor, and bringing strong types to system languages.
+And of course the various dependently typed languages; Rocq, Agda, Idris, and Lean.
+
+I also have been involved with the comuinty for Faiface's [Par](https://github.com/faiface/par-lang) which has given me many ideas that have helped to develop this page.
+In some ways, if Par is linear logic, I think this this is something in the vein of ultrafinitism lol.
+
 ## Types
 
 I think for a usable systems language you need to have complete control over the layout of memory.
