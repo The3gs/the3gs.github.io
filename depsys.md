@@ -157,7 +157,7 @@ dec door : record {
 
 This allows state machines to be encoded in a type safe way, without requiring Rust style Zero-Sized-Types.
 
-I quite like faiface's arrow syntax for calling functions in series, so I will likely have something like this as well.
+I quite like Par's arrow syntax for calling functions in series, so I will likely have something like this as well.
 
 ```
 def fibonacci(n: usize): usize {
