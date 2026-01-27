@@ -1,5 +1,4 @@
 ---
-layout: page
 title: "Dependently Typed Systems Language"
 permalink: /depsys
 ---
