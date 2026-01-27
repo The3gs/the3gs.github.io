@@ -1,6 +1,8 @@
+---
 layout: page
 title: "Dependently Typed Systems Language"
 permalink: /depsys
+---
 
 # Notes for a dependently typed systems language
 
