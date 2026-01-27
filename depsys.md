@@ -112,6 +112,8 @@ Here are subtyping rules I have considered:
 - `record {self: T, Xs} :> T` Note that `Xs` must all be dropable.
   This is probably most usful in expressing subtypes, as self can be a type, and Xs is ignorable in type annotations.
 
+The main reasons I would like subtyping is to allow certain seemless translations between types, without making it completely unpredictable and arcane (looking at you C++).
+
 ### Methods
 
 A record with a self value can be used like a dynamic object as follows.
@@ -210,4 +212,12 @@ Here are some things I have stewed with:
 
 - Some way of saying "This process never returns to the caller".
   Like Bottom in linear logic, and `?` in Par.
--  
+- I haven't fully decided how to handle allocation. I would like slightly more control than rust allows without needing to micromanage.
+
+## Conclusion
+
+I am happy to hear any ideas, or edge cases I havent considered yet.
+I don't have any prefered way to contact me for now, but if you leave a comment on whatever platform you found this on, I should probably see it.
+I do not know if I will ever make this language. It is mostly a fever dream of a language nerd for now, and I work a full time job and half a ½ million hobbies or so, so it carries no guarentees.
+
+This page will be updated as I remember things I have thought of, and come up with new ideas. 
