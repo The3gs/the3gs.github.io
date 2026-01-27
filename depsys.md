@@ -1,3 +1,7 @@
+layout: page
+title: "Dependently Typed Systems Language"
+permalink: /depsys
+
 # Notes for a dependently typed systems language
 
 I wish I could give you a name for it, but in this I fail.
