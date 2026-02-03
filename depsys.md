@@ -25,6 +25,8 @@ And of course the various dependently typed languages; Rocq, Agda, Idris, and Le
 I also have been involved with the comuinty for Faiface's [Par](https://github.com/faiface/par-lang) which has given me many ideas that have helped to develop this page.
 In some ways, if Par is linear logic, I think this this is something in the vein of ultrafinitism lol.
 
+Overall my goals for this language are to be able to describe as many low level processes within the type system, without sacrificing any power.
+
 ## Types
 
 I think for a usable systems language you need to have complete control over the layout of memory.
@@ -35,6 +37,13 @@ If possible I think that variable sizes should be expressed using the same type 
 The final type system will probably also need to worry about alignment of types,
 but every time I try to think about the math to make alignment work,
 I lost track of my second and third braincell, so I will be ignoring that for now.
+
+### Linear Types
+
+Unless more is known about a type, it is assumed to be linear.
+This allows us to use linear type's ability to express ownership and provide guarentees about the usage of various resources.
+
+When a value is used in a type declaration, it **does not** consume the value, allowing types to depend on linear values.
 
 ### Structural Typing
 
@@ -53,6 +62,10 @@ Mathematically, the two types are trivially isomorphic, but structs will be usef
 
 The size of a struct is the sum of the sizes of it's component ie if `T: Type(n)` and `U: Type(m)` then `struct {a0: T, a1: U}: Type(n + m)`
 
+#### Linearity
+
+Structs and Records are linear if and only if any of its members are linear values
+
 ### enumerated types
 
 I don't know what I want to call these, as I have never really loved any of the options, so I will just borrow enum from rust for now.
@@ -65,6 +78,10 @@ def Bool: Type(1) = enum {
   false,
 }
 ```
+
+#### Linearity
+
+An enum is treated linearly if any of its constructors are linear.
 
 ### Functions
 
@@ -82,11 +99,29 @@ The syntax for a function pointer is `(a: A, b: B, ...) -> R`
 Closures are of type `record { self_type :0 Type(_), call: (self: self_type, args...) -> R, self: self_type }`
 where the size of the context is usually infered and can be abreviated as `(args...) => R`.
 
+#### Linearity
+
+Funtion pointers are non-linear, and can be used any number of times.
+
+Closures are non-linear, as they contain a value `self` that is not known to be nonlinear.
+
 ### Box Types
 
 This is simple. It basically is a heap allocated value that allows you to fit a larger variable in a smaller one.
 
 `T: Type(n) ⊦ Box(T): Type(PTR_SIZE)`
+
+#### Linearity
+
+Box is linear if its inner type is linear
+
+### References
+
+I would love to have rust style references, which allow shared and unique access to objects.
+I haven't worked out the specifics of how lifetimes would work with the other types.
+
+One think I have played with is having mutable references with both an `in` type and an `out` type.
+For example, an initializer for a type `T: Type(n)` could be of type `(self: &mut(Unit(n), T)->Unit` (if `Unit(n): Type(n)`)
 
 ## Zero Quantified definitions
 
@@ -97,11 +132,18 @@ When a variable is declared using `:0` in stead of the usual `:` this means that
 
 I think it might be needed to have a higher universe called Kind that is zero quantified, such that `Type(n):0 Kind`
 
-## Recursion and Loops
+## Recursion, Loops and Totality
 
 I do not know if we should aim for a total language or not.
 The language nerd in me says it should be total.
 The systems programmer says we probably are going to need non-termination often enough to justify having our language inconsistent as a logic.
+
+Most practical languages are turing complete, but I have come to see this as a less than ideal situation.
+It is possible to have a powerful enough termination checker to catch most real world programs, and for the few times when that is not possible, we can easily add a well defiend escape hatch.
+
+One concern that I see with having a non total dependently typed language is the potential for non-terminating type checking.
+In practice, this in not a huge concern for me, as many programming language have type systems which themselves are turing complete if not artifically restricted (rust and c++ both are examples).
+As such, I don't think this is a good enough reason to insist on totality, even though I do lean that way.
 
 ## Subtypes
 
@@ -178,11 +220,20 @@ print(n) // 55
 The following methods have special behavior
 - `drop: (self : self_type) -> Unit`
   deletes the value
-- `copy: (self : self_type) -> (self_type, self_type)`
+- `copy: (self : self_type) -> Pair(self_type, self_type)`
   copies the value
 - `call: (self : self_type, args...) -> R`
   allows calling the record similar to a function of type `(args...) -> R`
 
+## Unsafe / Escape Hatches
+
+As this is designed to be a systems language, it will require some way to assert hardware properties and guarentees.
+
+I don't know the best way to implement this, but I expect that mmuch of it will come from asserting Axioms, and allowing transmutation.
+
+The code should be able to unsafely transmute between any types of the same size.
+
+Roughly speaking: `transmute: (n: usize, T0: Type(n), T1: Type(n), t: T0) T1` ignoring whatever syntax I come up with for unsafe.
 
 ## Usage Examples
 
@@ -215,6 +266,9 @@ Here are some things I have stewed with:
 - Some way of saying "This process never returns to the caller".
   Like Bottom in linear logic, and `?` in Par.
 - I haven't fully decided how to handle allocation. I would like slightly more control than rust allows without needing to micromanage.
+- I am not sure how to represent equality in the type system.
+  Most dependent type systems define it inductively, but That doesn't **really** give me intuition for how to encode an Identity type.
+  One thing I am fairly certain is that Uniqueness of Identity Proofs should probably hold: `(n : usize, T: Type(n), t0: T, p: Eq(t0, t0)) -> Eq(p, refl(p))`
 
 ## Conclusion
 
