@@ -13,7 +13,7 @@ Ideas are welcome.
 I am assuming that you have a decent understanding of dependent types, and type theory in general.
 
 I will be using a Rust style syntax for the pseudocode in this document.
-If anything strays far from Rust, I will attempt to explain my reasoning.
+If anything strays far from Rust, I will attempt to explan my reasoning.
 
 ## Inspirations
 
@@ -28,7 +28,7 @@ Overall my goals for this language are to be able to describe as many low level 
 ## Types
 
 I think for a usable systems language you need to have complete control over the layout of memory.
-For this reason, I believe that it is correct for the Kind of Types to be indexed by the size of the memory it occupies.
+For this reason, I beleive that it is correct for the Kind of Types to be indexed by the size of the memory it occupies.
 As such, Types of Types are indicated as `Type(n)` where `n` is a natural number.
 If possible I think that variable sizes should be expressed using the same type of numbers as is typically used for programming, so likely it will be an equivalent to Rust's `usize`, where `usize: Type(PTR_SIZE)`
 
@@ -39,7 +39,7 @@ I lost track of my second and third braincell, so I will be ignoring that for no
 ### Linear Types
 
 Unless more is known about a type, it is assumed to be linear.
-This allows us to use linear type's ability to express ownership and provide guarantees about the usage of various resources.
+This allows us to use linear type's ability to express ownership and provide guarentees about the usage of various resources.
 
 When a value is used in a type declaration, it **does not** consume the value, allowing types to depend on linear values.
 
@@ -92,7 +92,7 @@ Names I have considered, but of which I don't love any are:
 - enum
 - variant
 - either
-- union (wouldn't actually mind this one, except that it hearkens to C's untagged unions)
+- union (wouldn't actually mind this one, except thay it harkens to C's untagged unions)
 
 
 In dependent style, there should probably be options to have different constructors produce different types, but I am not certain on the syntax. It is WIP.
@@ -132,12 +132,12 @@ record {
   self: self_type
 }
 ```
-where the size of the context is usually inferred.
-The type of closures can be abbreviated as `(args...) => R`.
+where the size of the context is usually infered.
+The type of closures can be abreviated as `(args...) => R`.
 
 #### Size
 
-Functions will be `PTR_SIZE` as they are effectively just function pointers.
+Functions will be `PTR_SIZE` as they are effectivly just function pointers.
 
 Closures are sized according to the record rules.
 
@@ -169,8 +169,8 @@ For example, an initializer for a type `T: Type(n)` could be of type `(self: &mu
 
 ## Zero Quantified definitions
 
-This is something that I think is useful that I am borrowing from Quantified Type Theory.
-I only really have been exposed to this via a brief exploration with Idris, so my knowledge is limited.
+This is somthing that I think is useful that I am borrowing from Quantified Type Theory.
+I only really have been exposed to this via a brief exploration with idris, so my knowledge is limited.
 
 When a variable is declared using `:0` in stead of the usual `:` this means that the variable is only usable within types.
 
@@ -182,16 +182,16 @@ I do not know if we should aim for a total language or not.
 The language nerd in me says it should be total.
 The systems programmer says we probably are going to need non-termination often enough to justify having our language inconsistent as a logic.
 
-Most practical languages are Turing complete, but I have come to see this as a less than ideal situation.
-It is possible to have a powerful enough termination checker to catch most real world programs, and for the few times when that is not possible, we can easily add a well defined escape hatch.
+Most practical languages are turing complete, but I have come to see this as a less than ideal situation.
+It is possible to have a powerful enough termination checker to catch most real world programs, and for the few times when that is not possible, we can easily add a well defiend escape hatch.
 
 One concern that I see with having a non total dependently typed language is the potential for non-terminating type checking.
-In practice, this in not a huge concern for me, as many programming language have type systems which themselves are Turing complete if not artificially restricted (rust and c++ both are examples).
+In practice, this in not a huge concern for me, as many programming language have type systems which themselves are turing complete if not artifically restricted (rust and c++ both are examples).
 As such, I don't think this is a good enough reason to insist on totality, even though I do lean that way.
 
 ## Subtypes
 
-I like subtyping, but it does complicate some things. I would want subtyping of enums, and possibly some records, where elements can be trivially dropped.
+I like subtyping, but it does complecate some things. I would want subtyping of enums, and possibly some records, where elements can be trivially dropped.
 
 Here are subtyping rules I have considered:
 - `record {A: record {XYZ}, Xs} :> record {XYZ, Xs}` where XYZ doesn't have any names in common with Xs.
@@ -199,15 +199,15 @@ Here are subtyping rules I have considered:
 - `T :> enum { default(T) }`
   This allows defining `Result(T, E) = enum {default(T), error(E)}` which makes wrapping a result automatic.
 - `record {self: T, Xs} :> T` Note that `Xs` must all be dropable.
-  This is probably most useful in expressing subtypes, as self can be a type, and Xs is ignorable in type annotations.
+  This is probably most usful in expressing subtypes, as self can be a type, and Xs is ignorable in type annotations.
 
-The main reasons I would like subtyping is to allow certain seamless translations between types, without making it completely unpredictable and arcane (looking at you C++).
+The main reasons I would like subtyping is to allow certain seemless translations between types, without making it completely unpredictable and arcane (looking at you C++).
 
 ### Methods
 
 A record with a self value can be used like a dynamic object as follows.
 
-The print function is fictitious in the following example, and coerces it's argument to a usize.
+The print function is ficticious in the following example, and coerrces it's argument to a usize.
 It also assumes that usize can be copied.
 
 ```
@@ -272,9 +272,9 @@ The following methods have special behavior
 
 ## Unsafe / Escape Hatches
 
-As this is designed to be a systems language, it will require some way to assert hardware properties and guarantees.
+As this is designed to be a systems language, it will require some way to assert hardware properties and guarentees.
 
-I don't know the best way to implement this, but I expect that much of it will come from asserting Axioms, and allowing transmutation.
+I don't know the best way to implement this, but I expect that mmuch of it will come from asserting Axioms, and allowing transmutation.
 
 The code should be able to unsafely transmute between any types of the same size.
 
@@ -282,7 +282,7 @@ Roughly speaking: `transmute: (n: usize, T0: Type(n), T1: Type(n), t: T0) -> T1`
 
 ## Usage Examples
 
-The following are example that I think would be at least close to programs in the final language.
+The following are example that I think woudl be at least close to programs in the final language.
 
 ### GPIO Pins
 This is how I would expect a blinky example to look like on a Arduino or the like.
@@ -317,8 +317,8 @@ Here are some things I have stewed with:
 
 ## Conclusion
 
-I am happy to hear any ideas, or edge cases I haven't considered yet.
-I don't have any preferred way to contact me for now, but if you leave a comment on whatever platform you found this on, I should probably see it.
-I do not know if I will ever make this language. It is mostly a fever dream of a language nerd for now, and I work a full time job and half a ½ million hobbies or so, so it carries no guarantees.
+I am happy to hear any ideas, or edge cases I havent considered yet.
+I don't have any prefered way to contact me for now, but if you leave a comment on whatever platform you found this on, I should probably see it.
+I do not know if I will ever make this language. It is mostly a fever dream of a language nerd for now, and I work a full time job and half a ½ million hobbies or so, so it carries no guarentees.
 
 This page will be updated as I remember things I have thought of, and come up with new ideas. 
